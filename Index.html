@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جهان ماورایی | تجربه ای فراتر از واقعیت</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            overflow: hidden;
+            background: #000;
+            color: #0ff;
+            perspective: 1000px;
+        }
+        
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .content {
+            position: relative;
+            z-index: 1;
+            padding: 2rem;
+            text-align: center;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff;
+            animation: pulse 3s infinite alternate;
+            letter-spacing: 5px;
+        }
+        
+        p {
+            font-size: 1.5rem;
+            max-width: 800px;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            text-shadow: 0 0 10px #f0f, 0 0 20px #f0f;
+        }
+        
+        .portal {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #00ffcc 0%, #ff00cc 70%, transparent 71%);
+            box-shadow: 0 0 100px #00ffcc, 0 0 150px #ff00cc;
+            animation: rotate 10s infinite linear;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .portal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 30%, #ff00cc, transparent 20%),
+                radial-gradient(circle at 70% 70%, #00ffcc, transparent 20%);
+            animation: swirl 5s infinite alternate;
+            border-radius: 50%;
+        }
+        
+        .glow-text {
+            color: transparent;
+            background: linear-gradient(45deg, #ff00cc, #00ffcc, #ff00cc);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: gradient 3s linear infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.7; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.05); }
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes swirl {
+            0% { transform: rotate(0deg) scale(1); }
+            100% { transform: rotate(180deg) scale(1.2); }
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+        
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+        
+        button {
+            background: rgba(0, 255, 255, 0.2);
+            border: 2px solid #0ff;
+            color: #0ff;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            text-shadow: 0 0 5px #0ff;
+            box-shadow: 0 0 10px #0ff;
+        }
+        
+        button:hover {
+            background: rgba(0, 255, 255, 0.4);
+            transform: scale(1.1);
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            p { font-size: 1.2rem; }
+            .portal { width: 200px; height: 200px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    
+    <div class="content">
+        <h1 class="glow-text">به جهان ماورایی خوش آمدید</h1>
+        <p>این یک تجربه فراجهانی است که مرزهای واقعیت و خیال را در هم می آمیزد. آماده پرواز در بعدی دیگر هستی؟</p>
+        
+        <div class="portal"></div>
+        
+        <p>جهان بینهایت است و ابعاد ناشناخته بسیاری وجود دارند که هنوز کشف نشده اند. اینجا تنها نقطه آغاز است.</p>
+    </div>
+    
+    <div class="controls">
+        <button id="colorShift">تغییر رنگ کیهان</button>
+        <button id="addParticles">افزودن ذرات</button>
+        <button id="toggleSound">صدا</button>
+    </div>
+
+    <script>
+        // ایجاد canvas برای افکت‌های سه بعدی و ذرات
+        const canvasContainer = document.getElementById('canvas-container');
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        canvasContainer.appendChild(canvas);
+
+        // تنظیمات ذرات
+        const particles = [];
+        const particleCount = 200;
+        const connectionDistance = 150;
+
+        // کلاس ذره
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = Math.random() * 3 - 1.5;
+                this.speedY = Math.random() * 3 - 1.5;
+                this.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+            }
+            
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                
+                if (this.x > canvas.width || this.x < 0) {
+                    this.speedX = -this.speedX;
+                }
+                if (this.y > canvas.height || this.y < 0) {
+                    this.speedY = -this.speedY;
+                }
+            }
+            
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // ایجاد ذرات اولیه
+        function createParticles() {
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        // اتصال ذرات به یکدیگر
+        function connectParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < connectionDistance) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(0, 255, 255, ${1 - distance/connectionDistance})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        // انیمیشن
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // افکت پس‌زمینه
+            const gradient = ctx.createRadialGradient(
+                canvas.width / 2, canvas.height / 2, 0,
+                canvas.width / 2, canvas.height / 2, canvas.width
+            );
+            gradient.addColorStop(0, 'rgba(0, 10, 20, 0.1)');
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0.8)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // بروزرسانی و رسم ذرات
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+            }
+            
+            connectParticles();
+            
+            requestAnimationFrame(animate);
+        }
+
+        // تغییر اندازه canvas هنگام تغییر سایز پنجره
+        window.addEventListener('resize', function() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // تعامل با ماوس
+        let mouseX = 0;
+        let mouseY = 0;
+        
+        window.addEventListener('mousemove', function(e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            // تأثیرگذاری روی ذرات نزدیک به ماوس
+            for (let i = 0; i < particles.length; i++) {
+                const dx = particles[i].x - mouseX;
+                const dy = particles[i].y - mouseY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < 100) {
+                    particles[i].speedX += dx * 0.0005;
+                    particles[i].speedY += dy * 0.0005;
+                }
+            }
+        });
+
+        // دکمه تغییر رنگ
+        document.getElementById('colorShift').addEventListener('click', function() {
+            document.body.style.background = `hsl(${Math.random() * 360}, 80%, 10%)`;
+        });
+
+        // دکمه افزودن ذرات
+        document.getElementById('addParticles').addEventListener('click', function() {
+            for (let i = 0; i < 50; i++) {
+                particles.push(new Particle());
+            }
+        });
+
+        // دکمه صدا (نمادین)
+        document.getElementById('toggleSound').addEventListener('click', function() {
+            this.classList.toggle('active');
+            this.textContent = this.classList.contains('active') ? 'بی صدا' : 'صدا';
+        });
+
+        // شروع انیمیشن
+        createParticles();
+        animate();
+
+        // افکت تایپوگرافی برای متن
+        const texts = document.querySelectorAll('.glow-text');
+        texts.forEach(text => {
+            text.addEventListener('mouseover', () => {
+                text.style.textShadow = '0 0 30px #0ff, 0 0 40px #0ff, 0 0 50px #0ff';
+            });
+            text.addEventListener('mouseout', () => {
+                text.style.textShadow = '0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff';
+            });
+        });
+    </script>
+</body>
+</html>
