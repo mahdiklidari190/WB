@@ -3,918 +3,255 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RITMO - موزیک استریمینگ فارسی</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>RITMO - تست فرانت‌اند</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React و ReactDOM از CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- Babel برای JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Axios برای API -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- Lucide React Icons (ساده، فقط SVG icons inline استفاده می‌کنم چون CDN کامل نداره) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vazir-font@30.1.0/dist/font-face.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Vazir', sans-serif;
-        }
-
-        :root {
-            --primary: #0ea5e9;
-            --primary-dark: #0369a1;
-            --secondary: #ec4899;
-            --dark: #0f172a;
-            --dark-light: #1e293b;
-            --text: #f8fafc;
-            --text-light: #cbd5e1;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-        }
-
-        body {
-            background-color: var(--dark);
-            color: var(--text);
-            direction: rtl;
-            overflow-x: hidden;
-        }
-
-        /* Navigation */
-        nav {
-            background-color: var(--dark-light);
-            border-bottom: 1px solid var(--primary);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            padding: 1rem 0;
-        }
-
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--text);
-            text-decoration: none;
-        }
-
-        .logo i {
-            color: var(--secondary);
-        }
-
-        .logo span {
-            background: linear-gradient(to right, var(--secondary), var(--primary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .search-bar {
-            flex: 1;
-            max-width: 500px;
-            margin: 0 2rem;
-            position: relative;
-        }
-
-        .search-bar input {
-            width: 100%;
-            padding: 0.7rem 3rem 0.7rem 1rem;
-            border-radius: 2rem;
-            border: 1px solid #374151;
-            background-color: #1f2937;
-            color: var(--text);
-            font-size: 0.9rem;
-        }
-
-        .search-bar i {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #9ca3af;
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .nav-link {
-            color: var(--text-light);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: color 0.3s;
-        }
-
-        .nav-link:hover {
-            color: var(--primary);
-        }
-
-        .btn {
-            padding: 0.5rem 1.5rem;
-            border-radius: 2rem;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-        }
-
-        .btn-secondary {
-            background-color: var(--secondary);
-            color: white;
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--text);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        /* Main Content */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-        }
-
-        .hero {
-            text-align: center;
-            margin-bottom: 3rem;
-            padding: 3rem 0;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(to right, var(--secondary), var(--primary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            color: var(--text-light);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .section-title {
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .section-title a {
-            font-size: 1rem;
-            color: var(--primary);
-            text-decoration: none;
-        }
-
-        /* Cards */
-        .cards-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-
-        .card {
-            background-color: var(--dark-light);
-            border-radius: 0.5rem;
-            overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .card-img {
-            width: 100%;
-            aspect-ratio: 1;
-            object-fit: cover;
-        }
-
-        .card-content {
-            padding: 1rem;
-        }
-
-        .card-title {
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .card-text {
-            color: var(--text-light);
-            font-size: 0.9rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .card-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 1rem;
-        }
-
-        .card-action {
-            background: none;
-            border: none;
-            color: var(--text-light);
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-
-        .card-action:hover {
-            color: var(--primary);
-        }
-
-        /* Player */
-        .player {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: var(--dark-light);
-            border-top: 1px solid #374151;
-            padding: 1rem;
-            z-index: 100;
-        }
-
-        .player-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .player-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            flex: 1;
-        }
-
-        .player-img {
-            width: 50px;
-            height: 50px;
-            border-radius: 0.5rem;
-            object-fit: cover;
-        }
-
-        .player-details {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .player-title {
-            font-weight: bold;
-        }
-
-        .player-artist {
-            font-size: 0.9rem;
-            color: var(--text-light);
-        }
-
-        .player-controls {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            flex: 1;
-            justify-content: center;
-        }
-
-        .player-btn {
-            background: none;
-            border: none;
-            color: var(--text);
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-
-        .player-btn:hover {
-            color: var(--primary);
-        }
-
-        .player-btn-play {
-            background-color: var(--primary);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .player-progress {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .progress-bar {
-            flex: 1;
-            height: 4px;
-            background-color: #374151;
-            border-radius: 2px;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .progress {
-            position: absolute;
-            height: 100%;
-            background-color: var(--primary);
-            border-radius: 2px;
-            width: 30%;
-        }
-
-        /* Admin Panel */
-        .admin-container {
-            display: flex;
-            min-height: calc(100vh - 80px);
-        }
-
-        .admin-sidebar {
-            width: 250px;
-            background-color: var(--dark-light);
-            padding: 1.5rem 0;
-        }
-
-        .admin-content {
-            flex: 1;
-            padding: 1.5rem;
-        }
-
-        .admin-nav {
-            list-style: none;
-        }
-
-        .admin-nav li {
-            margin-bottom: 0.5rem;
-        }
-
-        .admin-nav a {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.8rem 1.5rem;
-            color: var(--text-light);
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-
-        .admin-nav a:hover, .admin-nav a.active {
-            background-color: rgba(14, 165, 233, 0.1);
-            color: var(--primary);
-            border-right: 3px solid var(--primary);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background-color: var(--dark-light);
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            border-left: 4px solid var(--primary);
-        }
-
-        .stat-card:nth-child(2) {
-            border-left-color: var(--secondary);
-        }
-
-        .stat-card:nth-child(3) {
-            border-left-color: var(--success);
-        }
-
-        .stat-card:nth-child(4) {
-            border-left-color: var(--warning);
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            margin: 0.5rem 0;
-        }
-
-        .stat-title {
-            color: var(--text-light);
-            font-size: 0.9rem;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: var(--dark-light);
-            border-radius: 0.5rem;
-            overflow: hidden;
-        }
-
-        .table th, .table td {
-            padding: 1rem;
-            text-align: right;
-            border-bottom: 1px solid #374151;
-        }
-
-        .table th {
-            background-color: #1a2434;
-            font-weight: bold;
-        }
-
-        .table tr:hover {
-            background-color: #1a2434;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.3rem 0.6rem;
-            border-radius: 1rem;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .badge-primary {
-            background-color: var(--primary);
-            color: white;
-        }
-
-        .badge-success {
-            background-color: var(--success);
-            color: white;
-        }
-
-        .badge-danger {
-            background-color: var(--danger);
-            color: white;
-        }
-
-        /* Auth Pages */
-        .auth-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 80vh;
-            padding: 2rem;
-        }
-
-        .auth-card {
-            background-color: var(--dark-light);
-            border-radius: 1rem;
-            padding: 2rem;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .auth-title {
-            text-align: center;
-            margin-bottom: 2rem;
-            font-size: 1.8rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--text-light);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border-radius: 0.5rem;
-            border: 1px solid #374151;
-            background-color: #1f2937;
-            color: var(--text);
-            font-size: 1rem;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .btn-block {
-            width: 100%;
-        }
-
-        .auth-link {
-            text-align: center;
-            margin-top: 1.5rem;
-            color: var(--text-light);
-        }
-
-        .auth-link a {
-            color: var(--primary);
-            text-decoration: none;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .search-bar {
-                margin: 0 1rem;
-            }
-
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-
-            .cards-container {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
-
-            .player-container {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .admin-container {
-                flex-direction: column;
-            }
-
-            .admin-sidebar {
-                width: 100%;
-            }
-        }
+        body { font-family: 'Vazir', sans-serif; background-color: #0f172a; color: white; }
+        .neon-pink { color: #ec4899; }
+        .neon-blue { color: #0ea5e9; }
+        .neon-purple { color: #8b5cf6; }
+        .neon-green { color: #10b981; }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav>
-        <div class="nav-container">
-            <a href="#" class="logo">
-                <i class="fas fa-music"></i>
-                <span>RITMO</span>
-            </a>
-            
-            <div class="search-bar">
-                <input type="text" placeholder="جستجوی آهنگ، هنرمند، آلبوم...">
-                <i class="fas fa-search"></i>
-            </div>
-            
-            <div class="nav-links">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-home"></i>
-                    <span>خانه</span>
-                </a>
-                <a href="#" class="nav-link">
-                    <i class="fas fa-search"></i>
-                    <span>کاوش</span>
-                </a>
-                <a href="#" class="nav-link">
-                    <i class="fas fa-heart"></i>
-                    <span>علاقه‌مندی‌ها</span>
-                </a>
-                <a href="#" class="nav-link">
-                    <i class="fas fa-crown"></i>
-                    <span>اشتراک ویژه</span>
-                </a>
-                <a href="#" class="nav-link">
-                    <i class="fas fa-user"></i>
-                    <span>پروفایل</span>
-                </a>
-                <button class="btn btn-primary">
-                    <i class="fas fa-sign-in-alt"></i>
-                    <span>ورود</span>
-                </button>
-            </div>
-            
-            <button class="mobile-menu-btn">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-    </nav>
+    <div id="root"></div>
 
-    <!-- Main Content -->
-    <div class="container">
-        <!-- Hero Section -->
-        <section class="hero">
-            <h1>به RITMO خوش آمدید</h1>
-            <p>کشف کنید، گوش دهید، لذت ببرید. دنیای موسیقی فارسی در دستان شما</p>
-        </section>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
 
-        <!-- Trending Songs -->
-        <section>
-            <div class="section-title">
-                <h2>آهنگ های ترند</h2>
-                <a href="#">مشاهده همه</a>
-            </div>
-            <div class="cards-container">
-                <!-- Song 1 -->
-                <div class="card">
-                    <img src="https://via.placeholder.com/300" alt="Song Cover" class="card-img">
-                    <div class="card-content">
-                        <div class="card-title">آهنگ عاشقانه</div>
-                        <div class="card-text">خواننده: محسن چاوشی</div>
-                        <div class="card-actions">
-                            <button class="card-action">
-                                <i class="fas fa-play"></i>
-                            </button>
-                            <button class="card-action">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="card-action">
-                                <i class="fas fa-download"></i>
+        // کامپوننت‌های ساده‌شده برای تست (فقط Home و Navbar، بقیه رو کامنت کردم)
+        // برای icons، SVG ساده استفاده کردم (lucide-react جایگزین)
+
+        // Icon کامپوننت ساده
+        const Icon = ({ name, className }) => {
+            const icons = {
+                Music: '<svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-4c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>',
+                Search: '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>',
+                User: '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>',
+                LogOut: '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>',
+                Play: '<svg class="h-12 w-12" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>',
+                Heart: '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>',
+                Download: '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>',
+                Clock: '<svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'
+            };
+            return React.createElement('div', { className: className, dangerouslySetInnerHTML: { __html: icons[name] || '' } });
+        };
+
+        // Navbar ساده‌شده (بدون router، فقط لینک‌های dummy)
+        const Navbar = () => {
+            const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+            const user = { name: 'مهدی', is_admin: true }; // dummy user برای تست
+
+            const handleLogout = () => alert('خروج');
+
+            return (
+                <nav className="bg-gray-800 border-b border-purple-500 sticky top-0 z-50">
+                    <div className="container mx-auto px-4 py-3">
+                        <div className="flex items-center justify-between">
+                            {/* Logo */}
+                            <div className="flex items-center space-x-2 space-x-reverse">
+                                <Icon name="Music" className="text-pink-400" />
+                                <span className="text-2xl font-bold bg-gradient-to-r from-pink-400 to-purple-500 bg-clip-text text-transparent">
+                                    RITMO
+                                </span>
+                            </div>
+
+                            {/* Search Bar */}
+                            <form className="hidden md:flex flex-1 max-w-2xl mx-8">
+                                <div className="relative w-full">
+                                    <Icon name="Search" className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                                    <input
+                                        type="text"
+                                        placeholder="جستجوی آهنگ، هنرمند، آلبوم..."
+                                        className="w-full bg-gray-700 text-white pr-10 pl-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 border border-gray-600"
+                                    />
+                                </div>
+                            </form>
+
+                            {/* Desktop Menu */}
+                            <div className="hidden md:flex items-center space-x-4 space-x-reverse">
+                                {user && (
+                                    <>
+                                        {user.is_admin && (
+                                            <a href="#admin" className="flex items-center space-x-2 space-x-reverse bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-full transition-colors">
+                                                <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"></path></svg>
+                                                <span>پنل مدیریت</span>
+                                            </a>
+                                        )}
+                                        <a href="#subscription" className="flex items-center space-x-2 space-x-reverse bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-full transition-colors">
+                                            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"></path></svg>
+                                            <span>اشتراک ویژه</span>
+                                        </a>
+                                        <a href="#profile" className="flex items-center space-x-2 space-x-reverse hover:text-blue-400 transition-colors">
+                                            <Icon name="User" />
+                                            <span>{user.name}</span>
+                                        </a>
+                                        <button onClick={handleLogout} className="flex items-center space-x-2 space-x-reverse text-red-400 hover:text-red-300 transition-colors">
+                                            <Icon name="LogOut" />
+                                            <span>خروج</span>
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+
+                            {/* Mobile Menu Button */}
+                            <button className="md:hidden p-2" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+                                <svg className={`h-6 w-6 ${isMobileMenuOpen ? 'hidden' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                </svg>
+                                <svg className={`h-6 w-6 ${!isMobileMenuOpen ? 'hidden' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
                             </button>
                         </div>
-                    </div>
-                </div>
-                
-                <!-- Song 2 -->
-                <div class="card">
-                    <img src="https://via.placeholder.com/300" alt="Song Cover" class="card-img">
-                    <div class="card-content">
-                        <div class="card-title">باران</div>
-                        <div class="card-text">خواننده: بنیامین بهادری</div>
-                        <div class="card-actions">
-                            <button class="card-action">
-                                <i class="fas fa-play"></i>
-                            </button>
-                            <button class="card-action">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="card-action">
-                                <i class="fas fa-download"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Song 3 -->
-                <div class="card">
-                    <img src="https://via.placeholder.com/300" alt="Song Cover" class="card-img">
-                    <div class="card-content">
-                        <div class="card-title">شب بخیر</div>
-                        <div class="card-text">خواننده: رضا صادقی</div>
-                        <div class="card-actions">
-                            <button class="card-action">
-                                <i class="fas fa-play"></i>
-                            </button>
-                            <button class="card-action">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="card-action">
-                                <i class="fas fa-download"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Song 4 -->
-                <div class="card">
-                    <img src="https://via.placeholder.com/300" alt="Song Cover" class="card-img">
-                    <div class="card-content">
-                        <div class="card-title">پریا</div>
-                        <div class="card-text">خواننده: محسن ابراهیم زاده</div>
-                        <div class="card-actions">
-                            <button class="card-action">
-                                <i class="fas fa-play"></i>
-                            </button>
-                            <button class="card-action">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="card-action">
-                                <i class="fas fa-download"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
 
-        <!-- New Albums -->
-        <section>
-            <div class="section-title">
-                <h2>آلبوم های جدید</h2>
-                <a href="#">مشاهده همه</a>
-            </div>
-            <div class="cards-container">
-                <!-- Album 1 -->
-                <div class="card">
-                    <img src="https://via.placeholder.com/300" alt="Album Cover" class="card-img">
-                    <div class="card-content">
-                        <div class="card-title">رگ خواب</div>
-                        <div class="card-text">محسن چاوشی</div>
+                        {/* Mobile Menu */}
+                        {isMobileMenuOpen && (
+                            <div className="md:hidden mt-4 pb-4 border-t border-gray-700 pt-4">
+                                <div className="flex flex-col space-y-4">
+                                    {user && (
+                                        <>
+                                            <a href="#profile" className="flex items-center space-x-2 space-x-reverse text-white">
+                                                <Icon name="User" />
+                                                <span>پروفایل</span>
+                                            </a>
+                                            {user.is_admin && (
+                                                <a href="#admin" className="flex items-center space-x-2 space-x-reverse text-white">
+                                                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"></path></svg>
+                                                    <span>پنل مدیریت</span>
+                                                </a>
+                                            )}
+                                            <button onClick={handleLogout} className="flex items-center space-x-2 space-x-reverse text-red-400">
+                                                <Icon name="LogOut" />
+                                                <span>خروج</span>
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </div>
-                </div>
-                
-                <!-- Album 2 -->
-                <div class="card">
-                    <img src="https://via.placeholder.com/300" alt="Album Cover" class="card-img">
-                    <div class="card-content">
-                        <div class="card-title">جاده</div>
-                        <div class="card-text">بنیامین بهادری</div>
-                    </div>
-                </div>
-                
-                <!-- Album 3 -->
-                <div class="card">
-                    <img src="https://via.placeholder.com/300" alt="Album Cover" class="card-img">
-                    <div class="card-content">
-                        <div class="card-title">خاطره</div>
-                        <div class="card-text">رضا صادقی</div>
-                    </div>
-                </div>
-                
-                <!-- Album 4 -->
-                <div class="card">
-                    <img src="https://via.placeholder.com/300" alt="Album Cover" class="card-img">
-                    <div class="card-content">
-                        <div class="card-title">شب زده</div>
-                        <div class="card-text">محسن ابراهیم زاده</div>
-                    </div>
-                </div>
-            </div>
-        </section>
+                </nav>
+            );
+        };
 
-        <!-- Top Artists -->
-        <section>
-            <div class="section-title">
-                <h2>برترین هنرمندان</h2>
-                <a href="#">مشاهده همه</a>
-            </div>
-            <div class="cards-container">
-                <!-- Artist 1 -->
-                <div class="card">
-                    <img src="https://via.placeholder.com/300" alt="Artist" class="card-img">
-                    <div class="card-content">
-                        <div class="card-title">محسن چاوشی</div>
-                        <div class="card-text">۱.۲M دنبال کننده</div>
-                    </div>
-                </div>
-                
-                <!-- Artist 2 -->
-                <div class="card">
-                    <img src="https://via.placeholder.com/300" alt="Artist" class="card-img">
-                    <div class="card-content">
-                        <div class="card-title">بنیامین بهادری</div>
-                        <div class="card-text">۹۸۰K دنبال کننده</div>
-                    </div>
-                </div>
-                
-                <!-- Artist 3 -->
-                <div class="card">
-                    <img src="https://via.placeholder.com/300" alt="Artist" class="card-img">
-                    <div class="card-content">
-                        <div class="card-title">رضا صادقی</div>
-                        <div class="card-text">۸۵۰K دنبال کننده</div>
-                    </div>
-                </div>
-                
-                <!-- Artist 4 -->
-                <div class="card">
-                    <img src="https://via.placeholder.com/300" alt="Artist" class="card-img">
-                    <div class="card-content">
-                        <div class="card-title">محسن ابراهیم زاده</div>
-                        <div class="card-text">۷۲۰K دنبال کننده</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
+        // Home ساده‌شده (داده‌های dummy برای تست، بدون API واقعی)
+        const Home = () => {
+            const [trendingSongs, setTrendingSongs] = useState([
+                { id: 1, title: 'آهنگ تست ۱', artist: { name: 'هنرمند ۱' }, duration: 180, cover_image: 'https://via.placeholder.com/150?text=Cover' },
+                { id: 2, title: 'آهنگ تست ۲', artist: { name: 'هنرمند ۲' }, duration: 240, cover_image: 'https://via.placeholder.com/150?text=Cover' },
+                // ۶ تا بیشتر اضافه کن برای تست
+                { id: 3, title: 'آهنگ تست ۳', artist: { name: 'هنرمند ۳' }, duration: 200, cover_image: 'https://via.placeholder.com/150?text=Cover' },
+                { id: 4, title: 'آهنگ تست ۴', artist: { name: 'هنرمند ۴' }, duration: 210, cover_image: 'https://via.placeholder.com/150?text=Cover' },
+                { id: 5, title: 'آهنگ تست ۵', artist: { name: 'هنرمند ۵' }, duration: 190, cover_image: 'https://via.placeholder.com/150?text=Cover' },
+                { id: 6, title: 'آهنگ تست ۶', artist: { name: 'هنرمند ۶' }, duration: 250, cover_image: 'https://via.placeholder.com/150?text=Cover' }
+            ]);
+            const [loading, setLoading] = useState(false);
 
-    <!-- Player -->
-    <div class="player">
-        <div class="player-container">
-            <div class="player-info">
-                <img src="https://via.placeholder.com/300" alt="Now Playing" class="player-img">
-                <div class="player-details">
-                    <div class="player-title">آهنگ عاشقانه</div>
-                    <div class="player-artist">محسن چاوشی</div>
-                </div>
-            </div>
-            
-            <div class="player-controls">
-                <button class="player-btn">
-                    <i class="fas fa-random"></i>
-                </button>
-                <button class="player-btn">
-                    <i class="fas fa-step-backward"></i>
-                </button>
-                <button class="player-btn player-btn-play">
-                    <i class="fas fa-play"></i>
-                </button>
-                <button class="player-btn">
-                    <i class="fas fa-step-forward"></i>
-                </button>
-                <button class="player-btn">
-                    <i class="fas fa-redo"></i>
-                </button>
-            </div>
-            
-            <div class="player-progress">
-                <span>1:23</span>
-                <div class="progress-bar">
-                    <div class="progress"></div>
-                </div>
-                <span>3:45</span>
-            </div>
-        </div>
-    </div>
+            const formatDuration = (seconds) => {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            };
 
-    <script>
-        // Simple JavaScript for interactive elements
-        document.addEventListener('DOMContentLoaded', function() {
-            // Play/Pause button functionality
-            const playBtn = document.querySelector('.player-btn-play');
-            playBtn.addEventListener('click', function() {
-                const icon = this.querySelector('i');
-                if (icon.classList.contains('fa-play')) {
-                    icon.classList.remove('fa-play');
-                    icon.classList.add('fa-pause');
-                } else {
-                    icon.classList.remove('fa-pause');
-                    icon.classList.add('fa-play');
-                }
-            });
-            
-            // Like button functionality
-            const likeBtns = document.querySelectorAll('.card-action .fa-heart');
-            likeBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    if (this.classList.contains('fas')) {
-                        this.classList.remove('fas');
-                        this.classList.add('far');
-                    } else {
-                        this.classList.remove('far');
-                        this.classList.add('fas');
-                        this.style.color = '#ec4899';
-                    }
-                });
-            });
-            
-            // Mobile menu toggle
-            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-            const navLinks = document.querySelector('.nav-links');
-            
-            mobileMenuBtn.addEventListener('click', function() {
-                if (navLinks.style.display === 'flex') {
-                    navLinks.style.display = 'none';
-                } else {
-                    navLinks.style.display = 'flex';
-                    navLinks.style.flexDirection = 'column';
-                    navLinks.style.position = 'absolute';
-                    navLinks.style.top = '100%';
-                    navLinks.style.left = '0';
-                    navLinks.style.right = '0';
-                    navLinks.style.backgroundColor = 'var(--dark-light)';
-                    navLinks.style.padding = '1rem';
-                    navLinks.style.gap = '1rem';
-                }
-            });
-        });
+            // شبیه‌سازی fetch (برای تست، واقعی axios رو کامنت کردم)
+            useEffect(() => {
+                setLoading(true);
+                // axios.get('/api/songs/trending').then(res => setTrendingSongs(res.data.data)).catch(console.error);
+                setTimeout(() => setLoading(false), 1000); // شبیه‌سازی loading
+            }, []);
+
+            if (loading) {
+                return (
+                    <div className="min-h-screen flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pink-400"></div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
+                    <div className="container mx-auto px-4 py-8">
+                        {/* Hero */}
+                        <section className="mb-12 text-center">
+                            <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-pink-400 via-purple-500 to-blue-400 bg-clip-text text-transparent">
+                                به RITMO خوش آمدید
+                            </h1>
+                            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+                                کشف کنید، گوش دهید، لذت ببرید. دنیای موسیقی فارسی در دستان شما
+                            </p>
+                        </section>
+
+                        {/* Trending Songs */}
+                        <section className="mb-8">
+                            <h2 className="text-2xl font-bold mb-4">آهنگ های ترند</h2>
+                            <div className="flex overflow-x-auto space-x-4 pb-4">
+                                {trendingSongs.map((song) => (
+                                    <div key={song.id} className="bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition-all group flex-shrink-0 w-48">
+                                        <div className="relative">
+                                            <img 
+                                                src={song.cover_image} 
+                                                alt={song.title}
+                                                className="w-full aspect-square object-cover rounded-lg mb-3"
+                                            />
+                                            <button className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
+                                                <Icon name="Play" className="text-white" />
+                                            </button>
+                                        </div>
+                                        <h3 className="font-semibold text-white truncate">{song.title}</h3>
+                                        <p className="text-gray-400 text-sm truncate">{song.artist.name}</p>
+                                        <div className="flex items-center justify-between mt-2">
+                                            <div className="flex items-center space-x-2 space-x-reverse">
+                                                <button className="text-gray-400 hover:text-pink-400 transition-colors">
+                                                    <Icon name="Heart" />
+                                                </button>
+                                                <button className="text-gray-400 hover:text-green-400 transition-colors">
+                                                    <Icon name="Download" />
+                                                </button>
+                                            </div>
+                                            <span className="text-gray-400 text-sm flex items-center">
+                                                <Icon name="Clock" className="ml-1" />
+                                                {formatDuration(song.duration)}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        {/* بقیه بخش‌ها رو برای اختصار کامنت کردم – می‌تونی اضافه کنی */}
+                        {/* <HorizontalScroll title="آلبوم های جدید" ... /> */}
+                    </div>
+                </div>
+            );
+        };
+
+        // App اصلی
+        const App = () => (
+            <>
+                <Navbar />
+                <Home />
+            </>
+        );
+
+        // Render
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
